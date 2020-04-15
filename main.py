@@ -14,6 +14,13 @@ def home():
     return render_template('mainpage.html')
 
 
+
+@app.route('/comments', methods=['GET'])
+def listing():
+    result = list(db.comments.find({}, {'_id': 0}))
+    return jsonify({'result': 'success', 'comments': result})
+
+
 @app.route('/comments', methods=['POST'])
 def saving():
     comment_receive = request.form['comment_give']
@@ -21,10 +28,6 @@ def saving():
     db.comments.insert_one(comments)
     return jsonify({'result': 'success'})
 
-@app.route('/comments', methods=['GET'])
-def listing():
-    result = list(db.comments.find({}, {'_id': 0}))
-    return jsonify({'result': 'success', 'comments': result})
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=5000, debug=True)

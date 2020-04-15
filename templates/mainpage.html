@@ -15,6 +15,29 @@
       href="{{ url_for('static', filename='style.css') }}"
     />
     <script>
+      function listing() {
+        $.ajax({
+          type: "GET",
+          url: "/comments",
+          data: {},
+          success: function (response) {
+            let comments = response["comments"];
+            for (let i; i < comments.length; i++) {
+              make_card(comments[i]['comment']);
+            }
+          },
+        });
+        $(document).ready(function () {
+          $("#card-text").html();
+          listing();
+        });
+      }
+
+      function make_card(comment) {
+        $("#card-text").append(`<div>` + comment + `</div>`);
+      }
+    </script>
+    <script>
       function postComments() {
         let comment = $("#comments").val();
         $.ajax({
@@ -22,30 +45,10 @@
           url: "/comments",
           data: { comment_give: comment },
           success: function (response) {
-            // 성공하면
-            if (response["result"] == "success") {
-              alert(response["msg"]);
-            }
+            $("#comments").val("");
           },
         });
       }
-    </script>
-    <script>
-      function listing() {
-        $.ajax({
-          type: "GET",
-          url: "/comments",
-          data: {},
-          success: function (response) {
-            let comments = response['comments'];
-            for(let i; i < comments.length; i++){
-              make_card
-            }
-          },
-        });
-      }
-
-      function make_card(comment, desc, image, title, url) {}
     </script>
   </head>
 
@@ -145,28 +148,29 @@
           alt="..."
         />
 
-        <div class="card-body">
-          <button class="btn p-0">
-            <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
-          </button>
-          <button class="btn p-0">
-            <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
-          </button>
-          <button class="btn p-0">
-            <img
-              src="{{ url_for('static', filename='img/sendmessage.jpg') }}"
-            />
-          </button>
-          <button class="btn p-0 right">
-            <img
-              class="right"
-              src="{{ url_for('static', filename='img/save.jpg') }}"
-            />
-          </button>
-
-          <p class="card-text">
-            comments
-          </p>
+        <div class="card-body p-2">
+          <section>
+            <button class="btn p-0">
+              <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
+            </button>
+            <button class="btn p-0">
+              <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
+            </button>
+            <button class="btn p-0">
+              <img
+                src="{{ url_for('static', filename='img/sendmessage.jpg') }}"
+              />
+            </button>
+            <button class="btn p-0 right">
+              <img
+                class="right"
+                src="{{ url_for('static', filename='img/save.jpg') }}"
+              />
+            </button>
+          </section>
+          <div id="card-text">
+            <span>post</span>
+          </div>
         </div>
         <div class="input-group mb-3">
           <input
