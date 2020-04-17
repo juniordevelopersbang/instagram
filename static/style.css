@@ -58,3 +58,8 @@
   background-color: white;
   border-bottom: 1px solid rgb(212, 212, 212);
 }
+
+.countLike {
+  font-size: 14px;
+  display: block;
+}

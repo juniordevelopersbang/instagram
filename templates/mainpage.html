@@ -14,42 +14,6 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <script>
-      function listing() {
-        $.ajax({
-          type: "GET",
-          url: "/comments",
-          data: {},
-          success: function (response) {
-            let comments = response["comments"];
-            for (let i; i < comments.length; i++) {
-              make_card(comments[i]['comment']);
-            }
-          },
-        });
-        $(document).ready(function () {
-          $("#card-text").html();
-          listing();
-        });
-      }
-
-      function make_card(comment) {
-        $("#card-text").append(`<div>` + comment + `</div>`);
-      }
-    </script>
-    <script>
-      function postComments() {
-        let comment = $("#comments").val();
-        $.ajax({
-          type: "POST",
-          url: "/comments",
-          data: { comment_give: comment },
-          success: function (response) {
-            $("#comments").val("");
-          },
-        });
-      }
-    </script>
   </head>
 
   <body>
@@ -150,8 +114,11 @@
 
         <div class="card-body p-2">
           <section>
-            <button class="btn p-0">
+            <button  class="btn p-0">
               <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
+            </button>
+            <button class="btn p-0">
+              <img src="{{ url_for('static', filename='img/hate1.jpg') }}" />
             </button>
             <button class="btn p-0">
               <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
@@ -168,6 +135,10 @@
               />
             </button>
           </section>
+          <div>
+            <span class="countLike">좋아요</span>
+            <span>minseok</span>
+          </div>
           <div id="card-text">
             <span>post</span>
           </div>
@@ -209,5 +180,45 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+
+    <script>
+      $(document).ready(function () {
+        listing();
+      });
+
+      function listing() {
+        $.ajax({
+          type: "GET",
+          url: "/comments",
+          data: {},
+          success: function (response) {
+            $("#card-text").html("");
+            let comments = response["comments"];
+            for (let i = 0; i < comments.length; i++) {
+              make_card(comments[i]["comment"]);
+            }
+          },
+        });
+      }
+
+      function make_card(comment) {
+        $("#card-text").append(`<div>${comment}</div>`);
+      }
+    </script>
+    <script>
+      function postComments() {
+        let comment = $("#comments").val();
+        $.ajax({
+          type: "POST",
+          url: "/comments",
+          data: { comment_give: comment },
+          success: function (response) {
+            $("#comments").val("");
+            listing();
+          },
+        });
+      }
+    </script>
+    
   </body>
 </html>
