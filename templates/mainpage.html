@@ -114,12 +114,10 @@
 
         <div class="card-body p-2">
           <section>
-            <button  class="btn p-0">
+            <button class="btn p-0 heart">
               <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
             </button>
-            <button class="btn p-0">
-              <img src="{{ url_for('static', filename='img/hate1.jpg') }}" />
-            </button>
+
             <button class="btn p-0">
               <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
             </button>
@@ -136,11 +134,11 @@
             </button>
           </section>
           <div>
-            <span class="countLike">좋아요</span>
-            <span>minseok</span>
-          </div>
-          <div id="card-text">
-            <span>post</span>
+            <span class="countLike">좋아요 1개</span>
+            <div>
+              <span class="name">minseok</span>
+              <span id="postcontent">post</span>
+            </div>
           </div>
         </div>
         <div class="input-group mb-3">
@@ -156,8 +154,9 @@
             <button
               onclick="postComments()"
               class="btn btn-outline-secondary border-0"
-              type="button"
+              type="submit"
               id="button-addon2"
+              aria-disabled="true"
             >
               게시
             </button>
@@ -192,17 +191,21 @@
           url: "/comments",
           data: {},
           success: function (response) {
-            $("#card-text").html("");
-            let comments = response["comments"];
-            for (let i = 0; i < comments.length; i++) {
-              make_card(comments[i]["comment"]);
+            $("#postcontent").html("");
+            let instagram = response["instagram"];
+            for (let i = 0; i < instagram.length; i++) {
+              make_comment(instagram[i]["comment"]);
             }
           },
         });
       }
 
-      function make_card(comment) {
-        $("#card-text").append(`<div>${comment}</div>`);
+      function make_comment(comment) {
+        $("#postcontent").append(`<div>${comment}</div>`);
+      }
+      function make_name(name) {
+        var name = "";
+        $("#postcontent").append(`<span>${name}</span>`);
       }
     </script>
     <script>
@@ -211,14 +214,22 @@
         $.ajax({
           type: "POST",
           url: "/comments",
-          data: { comment_give: comment },
+          data: { name_give: name, comment_give: comment },
           success: function (response) {
-            $("#comments").val("");
+            $("#comments").val();
             listing();
+            location.reload();
           },
         });
       }
+
+      $(".heart").click(function () {
+        if ($(".countLike").css("display") == "none") {
+          $(".countLike").show();
+        } else {
+          $(".countLike").hide();
+        }
+      });
     </script>
-    
   </body>
 </html>
