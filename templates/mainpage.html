@@ -12,12 +12,12 @@
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+      href="{{ url_for('static', filename='css/style.css') }}"
     />
   </head>
 
   <body>
-    <nav class="navbar navbar-custom navbar-light">
+    <nav class="navbar fixed-top navbar-custom navbar-light">
       <a class="navbar-brand" href="#"
         ><img
           src="{{ url_for('static', filename='img/logo.jpg') }}"
@@ -87,7 +87,7 @@
         </button>
       </div>
     </nav>
-    <div class="container">
+    <div class="container p-5">
       <div class="card w-50 p-0" style="width: 18rem;">
         <nav class="navbar navbar-light">
           <a class="navbar-brand" href="#">
