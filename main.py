@@ -1,9 +1,14 @@
 from pymongo import MongoClient
 import requests
 from flask import Flask, render_template, jsonify, request
+from flask_sqlalchemy import sqlalchemy
+from werkzeug.utils import secure_filename
+
+
+
+
 
 app = Flask(__name__)
-
 
 client = MongoClient('localhost', 27017)
 db = client.dbsparta
@@ -21,7 +26,7 @@ def login():
 
 @app.route('/post', methods=["GET"])
 def postpage():
-    return render_template('index.html')
+    return render_template('post.html')
 
 
 @app.route('/comments', methods=['GET'])
@@ -32,21 +37,24 @@ def listing():
 
 @app.route('/comments', methods=['POST'])
 def saving():
-    name_receive = request.form['name_give']
-    names = {'name': name_receive}
     comment_receive = request.form['comment_give']
     comments = {'comment': comment_receive}
 
-    db.Instagram.insert_one(names)
     db.Instagram.insert_one(comments)
 
     return jsonify({'result': 'success'})
 
 
-@app.route('/')
-def like():
+@app.route('/uploader', methods = ['GET', 'POST'])
+def upload_file():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save('./uploadimg/' + secure_filename(f.filename))
+      return 'file uploaded successfully'
+      
 
-    return jsonify({'result': 'success'})
+
+
 
 
 if __name__ == '__main__':

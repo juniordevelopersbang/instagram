@@ -137,8 +137,9 @@
             <span class="countLike">좋아요 1개</span>
             <div>
               <span class="name">minseok</span>
-              <span id="postcontent">post</span>
+              <span class="postcontent">hi</span>
             </div>
+            <span id="postcomment">hi</span>
           </div>
         </div>
         <div class="input-group mb-3">
@@ -191,7 +192,7 @@
           url: "/comments",
           data: {},
           success: function (response) {
-            $("#postcontent").html("");
+            $("#postcomment").html("");
             let instagram = response["instagram"];
             for (let i = 0; i < instagram.length; i++) {
               make_comment(instagram[i]["comment"]);
@@ -201,26 +202,26 @@
       }
 
       function make_comment(comment) {
-        $("#postcontent").append(`<div>${comment}</div>`);
+        $("#postcomment").append(`<div class='postcomment'>${comment}</div>`);
       }
       function make_name(name) {
         var name = "";
-        $("#postcontent").append(`<span>${name}</span>`);
+        $("#postcomment").append(`<span>${name}</span>`);
       }
     </script>
     <script>
       function postComments() {
         let comment = $("#comments").val();
-        $.ajax({
+          $.ajax({
           type: "POST",
           url: "/comments",
-          data: { name_give: name, comment_give: comment },
+          data: { comment_give: comment },
           success: function (response) {
             $("#comments").val();
             listing();
             location.reload();
           },
-        });
+        }); 
       }
 
       $(".heart").click(function () {
