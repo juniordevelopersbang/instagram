@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "c:\\Users\\82107\\Documents\\GitHub\\instagram\\venv\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Users\\82107\\Documents\\GitHub\\instagram\\venv\\Scripts\\python.exe",
+    "python.formatting.provider": "black"
 }

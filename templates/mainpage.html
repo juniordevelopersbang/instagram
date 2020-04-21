@@ -18,7 +18,7 @@
 
   <body>
     <nav class="navbar fixed-top navbar-custom navbar-light">
-      <a class="navbar-brand" href="#"
+      <a class="navbar-brand" onClick="location.href='mainpage'"
         ><img
           src="{{ url_for('static', filename='img/logo.jpg') }}"
           class="d-inline-block"
@@ -55,7 +55,7 @@
         </button>
       </form>
       <div class="right">
-        <button class="btn p-2">
+        <button class="btn p-2" onClick="location.href='mainpage'">
           <img
             class="topicon"
             src="{{ url_for('static', filename='img/home.jpg') }}"
@@ -67,7 +67,7 @@
             src="{{ url_for('static', filename='img/sendmessage.jpg') }}"
           />
         </button>
-        <button class="btn p-2">
+        <button class="btn p-2" onClick="location.href='post'">
           <img
             class="topicon"
             src="{{ url_for('static', filename='img/map.jpg') }}"
@@ -138,8 +138,8 @@
             <div>
               <span class="name">minseok</span>
               <span class="postcontent">hi</span>
+              <span class="postcomment"></span>
             </div>
-            <span id="postcomment">hi</span>
           </div>
         </div>
         <div class="input-group mb-3">
@@ -183,16 +183,17 @@
 
     <script>
       $(document).ready(function () {
-        listing();
+        commentlisting();
+        postlisting();
       });
 
-      function listing() {
+      function commentlisting() {
         $.ajax({
           type: "GET",
           url: "/comments",
           data: {},
           success: function (response) {
-            $("#postcomment").html("");
+            $(".postcomment").html("");
             let instagram = response["instagram"];
             for (let i = 0; i < instagram.length; i++) {
               make_comment(instagram[i]["comment"]);
@@ -201,27 +202,118 @@
         });
       }
 
-      function make_comment(comment) {
-        $("#postcomment").append(`<div class='postcomment'>${comment}</div>`);
+      function postlisting() {
+        $.ajax({
+          type: "GET",
+          url: "/post/api",
+          data: {},
+          success: function (response) {
+            let instapost = response["instapost"];
+            for (let i = 0; i < instapost.length; i++) {
+              make_post(instapost[i]["post"]);
+            }
+          },
+        });
       }
-      function make_name(name) {
-        var name = "";
-        $("#postcomment").append(`<span>${name}</span>`);
+
+      function make_comment(comment) {
+        $(".postcomment").append(`<div class='postcomment'>${comment}</div>`);
+      }
+
+      function make_post(post) {
+        $(".container")
+          .append(`<div class="card w-50 p-0" style="width: 18rem;">
+        <nav class="navbar navbar-light">
+          <a class="navbar-brand" href="#">
+            <img
+              src="{{ url_for('static', filename='img/profile.jpg') }}"
+              width="30"
+              height="30"
+              class="d-inline-block align-top"
+              alt=""
+            />
+            minseok
+          </a>
+
+          <img
+            class="right"
+            src="{{ url_for('static', filename='img/setting.jpg') }}"
+          />
+        </nav>
+        <img
+          src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBWdY3p.img?h=799&w=799&m=6&q=60&o=f&l=f&x=534&y=406"
+          class="card-img-top"
+          alt="..."
+        />
+
+        <div class="card-body p-2">
+          <section>
+            <button class="btn p-0 heart">
+              <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
+            </button>
+
+            <button class="btn p-0">
+              <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
+            </button>
+            <button class="btn p-0">
+              <img
+                src="{{ url_for('static', filename='img/sendmessage.jpg') }}"
+              />
+            </button>
+            <button class="btn p-0 right">
+              <img
+                class="right"
+                src="{{ url_for('static', filename='img/save.jpg') }}"
+              />
+            </button>
+          </section>
+          <div>
+            <span class="countLike">좋아요 1개</span>
+            <div>
+              <span class="name">minseok</span>
+              <span class="postcontent">${post}</span>
+              <span class= "postcomment"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input
+            id="comments"
+            type="text"
+            class="form-control border-0"
+            placeholder="댓글 달기..."
+            aria-label="댓글 달기..."
+            aria-describedby="button-addon2"
+          />
+          <div class="input-group-append">
+            <button
+              onclick="postComments()"
+              class="btn btn-outline-secondary border-0"
+              type="submit"
+              id="button-addon2"
+              aria-disabled="true"
+            >
+              게시
+            </button>
+          </div>
+        </div>
+      </div>`);
       }
     </script>
     <script>
       function postComments() {
         let comment = $("#comments").val();
-          $.ajax({
+        console.log(comment);
+        $.ajax({
           type: "POST",
           url: "/comments",
           data: { comment_give: comment },
           success: function (response) {
-            $("#comments").val();
-            listing();
-            location.reload();
+            $("#comments").val("");
+            commentlisting();
+            // location.reload();
           },
-        }); 
+        });
       }
 
       $(".heart").click(function () {
