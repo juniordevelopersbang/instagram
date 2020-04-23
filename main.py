@@ -4,12 +4,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import sqlalchemy
 from werkzeug.utils import secure_filename
 
-
-
-
-
 app = Flask(__name__)
-
 client = MongoClient('localhost', 27017)
 db = client.dbsparta
 
@@ -20,10 +15,16 @@ def home():
 
 # login page
 @app.route('/login')
-def login():
+def loginhtml():
     return render_template('login.html')
 
+# signup page
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
 
+
+# post page
 @app.route('/post')
 def posting():
     return render_template('post.html')
@@ -33,17 +34,21 @@ def posting():
 @app.route('/post', methods=['POST'])
 def postpage():
     post_recieve = request.form['post_give']
+    postid_recieve = request.form['postid_give']
+
     posts = {'post': post_recieve}
+    postids = {'postid': postid_recieve}
+    db.instapost.insert_one(postids)
     db.instapost.insert_one(posts)
+
     return jsonify({'success': True})
-    
 
 
+# post page db 데이터 조회
 @app.route('/post/api', methods=['GET'])
 def postlisting():
     postresult = list(db.instapost.find({}, {'_id': 0}))
     return jsonify({'result': 'success', 'instapost': postresult})
-    
 
 
 # comments page db 조회
@@ -58,23 +63,20 @@ def listing():
 def saving():
     comment_receive = request.form['comment_give']
     comments = {'comment': comment_receive}
-
-    db.Instagram.insert_one(comments)
-
+    if comments['comment'] == '':
+        return jsonify({'result': 'fail'})
+    else:
+        db.Instagram.insert_one(comments)
     return jsonify({'result': 'success'})
 
 
 # 파일 업로드
-@app.route('/uploader', methods = ['GET', 'POST'])
+@app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save('./uploadimg/' + secure_filename(f.filename))
-      return 'file uploaded successfully'
-      
-
-
-
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save('./uploadimg/' + secure_filename(f.filename))
+        return 'file uploaded successfully'
 
 
 if __name__ == '__main__':

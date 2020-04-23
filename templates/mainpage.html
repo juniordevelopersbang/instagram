@@ -137,8 +137,8 @@
             <span class="countLike">좋아요 1개</span>
             <div>
               <span class="name">minseok</span>
-              <span class="postcontent">hi</span>
-              <span class="postcomment"></span>
+              <span id="postid" class="postcontent">hi</span>
+              <span id="postcomment"></span>
             </div>
           </div>
         </div>
@@ -193,10 +193,10 @@
           url: "/comments",
           data: {},
           success: function (response) {
-            $(".postcomment").html("");
+            $("#postcomment").html("");
             let instagram = response["instagram"];
             for (let i = 0; i < instagram.length; i++) {
-              make_comment(instagram[i]["comment"]);
+              make_comment(instagram[i]['comment']);
             }
           },
         });
@@ -217,9 +217,8 @@
       }
 
       function make_comment(comment) {
-        $(".postcomment").append(`<div class='postcomment'>${comment}</div>`);
+        $("#postcomment").append(`<div id='postcomment'>${comment}</div>`);
       }
-
       function make_post(post) {
         $(".container")
           .append(`<div class="card w-50 p-0" style="width: 18rem;">
@@ -272,7 +271,7 @@
             <div>
               <span class="name">minseok</span>
               <span class="postcontent">${post}</span>
-              <span class= "postcomment"></span>
+              <span  id= "postcomment"></span>
             </div>
           </div>
         </div>
@@ -303,14 +302,17 @@
     <script>
       function postComments() {
         let comment = $("#comments").val();
-        console.log(comment);
         $.ajax({
           type: "POST",
           url: "/comments",
           data: { comment_give: comment },
           success: function (response) {
-            $("#comments").val("");
-            commentlisting();
+            if (comment == "") {
+              alert("댓글을 입력하세요");
+            } else {
+              $("#comments").val("");
+              commentlisting();
+            }
             // location.reload();
           },
         });
