@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 import requests
 from flask import Flask, render_template, jsonify, request
-from flask_sqlalchemy import sqlalchemy
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -34,13 +33,9 @@ def posting():
 @app.route('/post', methods=['POST'])
 def postpage():
     post_recieve = request.form['post_give']
-    postid_recieve = request.form['postid_give']
-
     posts = {'post': post_recieve}
-    postids = {'postid': postid_recieve}
-    db.instapost.insert_one(postids)
     db.instapost.insert_one(posts)
-
+    db.instapost.update({'post': 'hi'}, {'$inc': {'count': 1}}, upsert=False)
     return jsonify({'success': True})
 
 
