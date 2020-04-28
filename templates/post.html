@@ -169,14 +169,11 @@
     <script>
       function post() {
         let postcontent = $("#postcontent").val();
-        var postid = 1;
         $.ajax({
           type: "POST",
           url: "/post",
-          data: { post_give: postcontent, postid_give: postid },
+          data: { post_give: postcontent},
           success: function (response) {
-            let instapost = response["instapost"];
-            $("#postcontent").val("");
             alert("Post 완료!");
           },
         });

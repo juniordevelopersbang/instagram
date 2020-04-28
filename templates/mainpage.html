@@ -135,11 +135,15 @@
           </section>
           <div>
             <span class="countLike">좋아요 1개</span>
-            <div>
+            <div class="postcontent_box" id="postid" name = '1'>
               <span class="name">minseok</span>
               <span class="postcontent">hi</span>
-              <span id="postcomment"></span>
             </div>
+              <div class="comment_box">
+                <span id="userid"></span>
+                <span id="postcomment"></span>
+              </div>
+            
           </div>
         </div>
         <div class="input-group">
@@ -195,7 +199,8 @@
             $("#postcomment").html("");
             let instagram = response["instagram"];
             for (let i = 0; i < instagram.length; i++) {
-              make_comment(instagram[i]['comment']);
+              make_userid(instagram[i]["userid"]);
+              make_comment(instagram[i]["comment"]);
             }
           },
         });
@@ -209,16 +214,21 @@
           success: function (response) {
             let instapost = response["instapost"];
             for (let i = 0; i < instapost.length; i++) {
-              make_post(instapost[i]["post"]);
+              make_post(instapost[i]["postcontent"]);
             }
           },
         });
       }
 
-      function make_comment(comment) {
-        $("#postcomment").append(`<div>${comment}</div>`);
+      function make_userid(userid) {
+        $("#userid").append(`<span>${userid}</span>`);
       }
-      function make_post(post) {
+
+      function make_comment(comment) {
+        $("#postcomment").append(`<span>${comment}</span>`);
+      }
+
+      function make_post(postcontent) {
         $(".container")
           .append(`<div class="card w-50 p-0" style="width: 18rem;">
         <nav class="navbar navbar-light">
@@ -232,7 +242,6 @@
             />
             minseok
           </a>
-
           <img
             class="right"
             src="{{ url_for('static', filename='img/setting.jpg') }}"
@@ -243,13 +252,11 @@
           class="card-img-top"
           alt="..."
         />
-
         <div class="card-body p-2">
           <section>
             <button class="btn p-0 heart">
               <img src="{{ url_for('static', filename='img/heart.jpg') }}" />
             </button>
-
             <button class="btn p-0">
               <img src="{{ url_for('static', filename='img/chat.jpg') }}" />
             </button>
@@ -269,7 +276,7 @@
             <span class="countLike">좋아요 1개</span>
             <div>
               <span class="name">minseok</span>
-              <span class="postcontent">${post}</span>
+              <span class="postcontent">${postcontent}</span>
               <span id='postcomment'></span>
             </div>
           </div>
@@ -300,10 +307,12 @@
     <script>
       function postComments() {
         let comment = $(".comments").val();
+        let postid = $('#postid').attr('name')
+        console.log(postid)
         $.ajax({
           type: "POST",
           url: "/comments",
-          data: { comment_give: comment },
+          data: { comment_give: comment, postid_give:postid },
           success: function (response) {
             if (comment == "") {
               alert("댓글을 입력하세요");
