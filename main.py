@@ -2,6 +2,9 @@ from pymongo import MongoClient
 import requests
 from flask import Flask, render_template, jsonify, request
 from werkzeug.utils import secure_filename
+from bson.json_util import loads, dumps
+from bson import BSON
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 client = MongoClient("localhost", 27017)
@@ -43,7 +46,7 @@ def postpage():
 # post page db 데이터 조회
 @app.route("/post/api", methods=["GET"])
 def postlisting():
-    postresult = list(db.instapost.find({}))
+    postresult = list(db.instapost.find({}, {"_id": 0}))
     return jsonify({"result": "success", "instapost": postresult})
 
 
@@ -51,34 +54,20 @@ def postlisting():
 @app.route("/comments", methods=["GET"])
 def listing():
     result = list(db.Instagram.find({}, {"_id": 0}))
-    print(result)
-    postresult = list(db.instapost.find({}))
-    postid = (item for item in result if item["postid"] == 1)
-    dict = next(postid, False)
-    for i in postresult:
-        db.instapost.find({'_id': i})
-        if i == dict["postid"]:
-            return({'success': True})
-    return jsonify({'success': True, 'instagram': dict})
-    
+    return jsonify({"success": True, "instagram": result})
 
 
 # 작성받은 comments db에 집어넣기
-@app.route("/comments", methods=["POST"])
+@app.route("/comments/api", methods=["POST"])
 def saving():
-    comment_receive = request.form["comment_give"]
-    comments = {"comment": comment_receive}
-    
-    postid_receive = request.form["postid_give"]
-    postids = {"postid": postid_receive}
-    
+    comment_receive = request.form["comment_give"]    
+    comments = {'comment':comment_receive}
     if comments["comment"] == "":
         return jsonify({"result": "fail"})
     else:
         db.Instagram.insert_one(comments)
-        db.Instagram.insert_one(postids)
-        
     return jsonify({"result": "success"})
+    
 
 
 # 파일 업로드
@@ -88,6 +77,8 @@ def upload_file():
         f = request.files["file"]
         f.save("./uploadimg/" + secure_filename(f.filename))
         return "file uploaded successfully"
+
+
 
 
 if __name__ == "__main__":

@@ -135,15 +135,13 @@
           </section>
           <div>
             <span class="countLike">좋아요 1개</span>
-            <div class="postcontent_box" id="postid" name = '1'>
+            <div class="postcontent_box">
               <span class="name">minseok</span>
               <span class="postcontent">hi</span>
             </div>
-              <div class="comment_box">
-                <span id="userid"></span>
-                <span id="postcomment"></span>
-              </div>
-            
+            <div class="comment_box">
+              <span id="postcomment"></span>
+            </div>
           </div>
         </div>
         <div class="input-group">
@@ -190,6 +188,7 @@
         postlisting();
       });
 
+      // comment api
       function commentlisting() {
         $.ajax({
           type: "GET",
@@ -199,13 +198,31 @@
             $("#postcomment").html("");
             let instagram = response["instagram"];
             for (let i = 0; i < instagram.length; i++) {
-              make_userid(instagram[i]["userid"]);
+              // make_userid(instagram[i]["userid"]);
               make_comment(instagram[i]["comment"]);
             }
           },
         });
       }
 
+      function postComments() {
+        let comment = $(".comments").val();
+        $.ajax({
+          type: "POST",
+          url: "/comments/api",
+          data: { comment_give: comment },
+          success: function (response) {
+            if (comment == "") {
+              alert("댓글을 입력하세요");
+            } else {
+              $(".comments").val("");
+              commentlisting();
+            }
+          },
+        });
+      }
+
+      // post api
       function postlisting() {
         $.ajax({
           type: "GET",
@@ -220,12 +237,14 @@
         });
       }
 
-      function make_userid(userid) {
-        $("#userid").append(`<span>${userid}</span>`);
-      }
+      // function make_userid(userid) {
+      //   $("#userid").append(`<span>${userid}</span>`);
+      // }
 
       function make_comment(comment) {
-        $("#postcomment").append(`<span>${comment}</span>`);
+        $("#postcomment").append(`<div class="comment_box">
+              <span id="postcomment">${comment}</span>
+            </div>`);
       }
 
       function make_post(postcontent) {
@@ -303,35 +322,6 @@
         </div>
       </div>`);
       }
-    </script>
-    <script>
-      function postComments() {
-        let comment = $(".comments").val();
-        let postid = $('#postid').attr('name')
-        console.log(postid)
-        $.ajax({
-          type: "POST",
-          url: "/comments",
-          data: { comment_give: comment, postid_give:postid },
-          success: function (response) {
-            if (comment == "") {
-              alert("댓글을 입력하세요");
-            } else {
-              $(".comments").val("");
-              commentlisting();
-            }
-            // location.reload();
-          },
-        });
-      }
-
-      $(".heart").click(function () {
-        if ($(".countLike").css("display") == "none") {
-          $(".countLike").show();
-        } else {
-          $(".countLike").hide();
-        }
-      });
     </script>
   </body>
 </html>
